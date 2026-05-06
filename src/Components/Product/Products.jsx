@@ -15,11 +15,77 @@ const slugify = (str) =>
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 
+// ✅ attributes normalize
+function normalizeAttributes(attributes = []) {
+  const map = {};
+  attributes.forEach((attr) => {
+    if (!map[attr.attributeKey]) map[attr.attributeKey] = [];
+    if (Array.isArray(attr.values)) map[attr.attributeKey].push(...attr.values);
+  });
+  return Object.entries(map).map(([key, values]) => ({
+    attributeKey: key,
+    values: [...new Set(values)],
+  }));
+}
+
+// ✅ attributes मधून description शोधतो — key case-insensitive
+function getDescriptionFromAttrs(attributes = []) {
+  const normalized = normalizeAttributes(attributes);
+  // "description", "Description", "DESC", "desc" — सगळे handle करतो
+  const descAttr = normalized.find(
+    (a) => a.attributeKey?.toLowerCase() === "description"
+  );
+  return descAttr?.values?.[0] || null;
+}
+
+// ✅ फक्त 2 sentences किंवा max 160 chars
+function getTwoLineDescription(description) {
+  if (!description) return null;
+  const trimmed = String(description).trim();
+  if (!trimmed) return null;
+
+  // sentence split
+  const sentences = trimmed.split(/(?<=[.!?])\s+/);
+  if (sentences.length >= 2) {
+    return sentences.slice(0, 2).join(" ");
+  }
+  if (trimmed.length > 160) return trimmed.slice(0, 160).trimEnd() + "…";
+  return trimmed;
+}
+
+// ✅ product मधून description काढतो — सर्व possible locations तपासतो
+function extractDescription(product) {
+  if (!product) return null;
+
+  // 1) attributes array मधून (case-insensitive key match)
+  const fromAttrs = getDescriptionFromAttrs(product.attributes || []);
+  if (fromAttrs) return fromAttrs;
+
+  // 2) product.description (string)
+  if (product.description && typeof product.description === "string") {
+    return product.description;
+  }
+
+  // 3) product.desc
+  if (product.desc && typeof product.desc === "string") {
+    return product.desc;
+  }
+
+  // 4) product.shortDescription
+  if (product.shortDescription && typeof product.shortDescription === "string") {
+    return product.shortDescription;
+  }
+
+  return null;
+}
+
+/* ════════════════════════════════════════════════════════
+   Products Component
+   ════════════════════════════════════════════════════════ */
 function Products() {
   const { categorySlug, subCategorySlug } = useParams();
 
   const [categories, setCategories] = useState([]);
-  // subcategories: { [categoryId]: [...subs] }
   const [subcategoriesMap, setSubcategoriesMap] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +98,6 @@ function Products() {
     try {
       setLoading(true);
 
-      // 1) Fetch all categories
       const catRes = await axios.get(`${API_BASE}/categories`, {
         params: { domainName: DOMAIN_NAME },
       });
@@ -40,10 +105,9 @@ function Products() {
       setCategories(cats);
 
       const activeCategory = cats.find(
-        (c) => slugify(c.slug || c.name) === slugify(categorySlug),
+        (c) => slugify(c.slug || c.name) === slugify(categorySlug)
       );
 
-      // 2) Fetch subcategories category-wise (for all categories)
       const subFetches = await Promise.all(
         cats.map((cat) =>
           axios
@@ -51,8 +115,8 @@ function Products() {
               params: { domainName: DOMAIN_NAME, categoryId: cat._id },
             })
             .then((res) => ({ catId: cat._id, subs: res.data?.data || [] }))
-            .catch(() => ({ catId: cat._id, subs: [] })),
-        ),
+            .catch(() => ({ catId: cat._id, subs: [] }))
+        )
       );
 
       const newSubMap = {};
@@ -61,24 +125,19 @@ function Products() {
       });
       setSubcategoriesMap(newSubMap);
 
-      // Flat list for active category
       const activeSubs = activeCategory
         ? newSubMap[activeCategory._id] || []
         : [];
       const allSubs = Object.values(newSubMap).flat();
 
       const activeSubcategory = (activeCategory ? activeSubs : allSubs).find(
-        (s) => slugify(s.slug || s.name) === slugify(subCategorySlug),
+        (s) => slugify(s.slug || s.name) === slugify(subCategorySlug)
       );
 
-      // 3) Fetch products
       let prodRes;
       if (activeSubcategory) {
         prodRes = await axios.get(`${API_BASE}/products`, {
-          params: {
-            domainName: DOMAIN_NAME,
-            subCategoryId: activeSubcategory._id,
-          },
+          params: { domainName: DOMAIN_NAME, subCategoryId: activeSubcategory._id },
         });
       } else if (activeCategory) {
         prodRes = await axios.get(`${API_BASE}/products`, {
@@ -90,7 +149,16 @@ function Products() {
         });
       }
 
-      setProducts(prodRes.data?.data || []);
+      const fetchedProducts = prodRes.data?.data || [];
+
+      // 🔍 DEBUG: पहिल्या product चा structure console मध्ये बघतो
+      if (fetchedProducts.length > 0) {
+        console.log("🔍 PRODUCT DEBUG — पहिला product:", fetchedProducts[0]);
+        console.log("🔍 attributes:", fetchedProducts[0]?.attributes);
+        console.log("🔍 description field:", fetchedProducts[0]?.description);
+      }
+
+      setProducts(fetchedProducts);
     } catch (err) {
       console.error(err);
     } finally {
@@ -98,18 +166,17 @@ function Products() {
     }
   };
 
-  // Flat subcategories list (all)
   const subcategories = useMemo(
     () => Object.values(subcategoriesMap).flat(),
-    [subcategoriesMap],
+    [subcategoriesMap]
   );
 
   const activeCategory = useMemo(
     () =>
       categories.find(
-        (c) => slugify(c.slug || c.name) === slugify(categorySlug),
+        (c) => slugify(c.slug || c.name) === slugify(categorySlug)
       ),
-    [categories, categorySlug],
+    [categories, categorySlug]
   );
 
   const activeSubcategory = useMemo(() => {
@@ -117,7 +184,7 @@ function Products() {
       ? subcategoriesMap[activeCategory._id] || []
       : subcategories;
     return subs.find(
-      (s) => slugify(s.slug || s.name) === slugify(subCategorySlug),
+      (s) => slugify(s.slug || s.name) === slugify(subCategorySlug)
     );
   }, [subcategoriesMap, subcategories, activeCategory, subCategorySlug]);
 
@@ -133,17 +200,13 @@ function Products() {
     return (
       <div className="products-loading">
         <div className="loader-ring">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span><span></span>
         </div>
         <p>Loading products…</p>
       </div>
     );
   }
 
-  // Subcategories for active category tab bar
   const activeCategorySubs = activeCategory
     ? subcategoriesMap[activeCategory._id] || []
     : [];
@@ -153,9 +216,7 @@ function Products() {
       {/* ── Breadcrumb ── */}
       <div className="breadcrumb-bar">
         <div className="container">
-          <Link to="/products" className="bc-link">
-            All Products
-          </Link>
+          <Link to="/products" className="bc-link">All Products</Link>
           {categorySlug && (
             <>
               <span className="bc-sep">›</span>
@@ -215,7 +276,7 @@ function Products() {
           </p>
         </div>
       </div>
-      
+
       {/* ── Grid ── */}
       <div className="products-section">
         <div className="container">
@@ -224,9 +285,7 @@ function Products() {
               <div className="empty-icon">📦</div>
               <h3>No products found</h3>
               <p>Try a different category or browse all products.</p>
-              <Link to="/products" className="btn-back">
-                ← Browse All Products
-              </Link>
+              <Link to="/products" className="btn-back">← Browse All Products</Link>
             </div>
           ) : (
             <div className="products-grid">
@@ -246,7 +305,9 @@ function Products() {
   );
 }
 
-/* ── Product Card ── */
+/* ════════════════════════════════════════════════════════
+   Product Card
+   ════════════════════════════════════════════════════════ */
 function ProductCard({ product, subMap = {}, index = 0 }) {
   const [mainImage, setMainImage] = useState(null);
   const [imgLoading, setImgLoading] = useState(true);
@@ -271,16 +332,17 @@ function ProductCard({ product, subMap = {}, index = 0 }) {
       }
     };
     fetchImg();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [product._id]);
 
-  // ✅ Subcategory name as product name
+  // ✅ Title
   const subcategory = subMap[product.subCategoryId];
   const productName = subcategory?.name || product.name || "Product";
-  const description = product.description || "Premium quality product";
-  
+
+  // ✅ Description — सर्व possible sources तपासतो
+  const rawDescription = extractDescription(product);
+  const description = getTwoLineDescription(rawDescription);
+
   return (
     <Link
       to={`/product/${product._id}`}
@@ -304,9 +366,13 @@ function ProductCard({ product, subMap = {}, index = 0 }) {
           <span className="card-overlay-text">View Details →</span>
         </div>
       </div>
+
       <div className="card-body">
         <h3 className="card-title">{productName}</h3>
-        <p className="card-desc">{description}</p>
+
+        {/* ✅ Description — असेल तरच, max 2 lines */}
+        {description && <p className="card-desc">{description}</p>}
+
         <div className="card-footer">
           <span className="card-btn">View More →</span>
         </div>

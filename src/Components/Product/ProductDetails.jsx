@@ -377,6 +377,7 @@ function ProductDetails() {
           </button>
         </div>
       )}
+      
     </div>
   );
 }
