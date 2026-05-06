@@ -1,0 +1,796 @@
+/* ============================================================
+   NavbarComponent.css  — Green & Gold Theme 2025  (Updated)
+   Fixes:
+   ✅ Logo larger on PC & Mobile, height matches navbar
+   ✅ Brand text vertically aligned with logo
+   ✅ Navbar sticky — stays fixed while scrolling (no movement)
+   ✅ Mobile sidebar closes on overlay (outside) click
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap");
+
+:root {
+  --green-deep:  #071e18;
+  --green:       #0b3026;
+  --green-mid:   #134535;
+  --green-light: #1a5c45;
+
+  --gold:        #d4af37;
+  --gold-bright: #f0cc60;
+  --gold-muted:  #a88820;
+  --gold-glow:   rgba(212, 175, 55, 0.35);
+
+  --white:    #ffffff;
+  --white-90: rgba(255, 255, 255, 0.9);
+  --white-60: rgba(255, 255, 255, 0.6);
+  --white-30: rgba(255, 255, 255, 0.3);
+  --white-12: rgba(255, 255, 255, 0.12);
+  --white-06: rgba(255, 255, 255, 0.06);
+
+  --ff-brand: "Playfair Display", Georgia, serif;
+  --ff-ui:    "Poppins", system-ui, sans-serif;
+
+  --ease:   cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 0.2s var(--ease);
+  --t-med:  0.35s var(--ease);
+
+  --radius:    8px;
+  --sidebar-w: 300px;
+
+  /* ── Navbar + logo height tokens — one value controls everything ── */
+  --navbar-h-desktop: 96px;   /* PC navbar height             */
+  --navbar-h-tablet:  78px;   /* Tablet (≤1024px)             */
+  --navbar-h-mobile:  68px;   /* Mobile (≤768px)              */
+
+  --logo-h-desktop:   82px;   /* PC logo  (navbar − padding)  */
+  --logo-h-tablet:    64px;   /* Tablet logo                  */
+  --logo-h-mobile:    56px;   /* Mobile logo                  */
+
+  /* legacy aliases */
+  --brand-dark:      var(--gold);
+  --brand-orange:    var(--gold-bright);
+  --bg-light:        var(--green-deep);
+  --shadow-nav:      0 4px 32px rgba(0, 0, 0, 0.45);
+  --shadow-dropdown: 0 16px 48px rgba(0, 0, 0, 0.55);
+  --transition:      0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-heading:    var(--ff-ui);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  font-family: var(--ff-ui);
+}
+
+/* ======================================================
+   TOP BAR — hidden in this theme
+   ====================================================== */
+.top-bar        { display: none !important; }
+.social-icons   { display: none; }
+
+/* ======================================================
+   NAVBAR CONTAINER
+   ====================================================== */
+.navbar-container {
+  width: 100%;
+  overflow: visible;
+  position: relative;
+  z-index: 1000;
+}
+
+/* ======================================================
+   MAIN NAV
+   Sticky — stays locked at top while page scrolls.
+   No JS needed; position:sticky + top:0 handles it.
+   ====================================================== */
+.main-nav {
+  width: 100%;
+  height: var(--navbar-h-desktop);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 0 0;
+  background: var(--green);
+
+  /* ── KEY: sticky navbar that never moves on scroll ── */
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+
+  overflow: visible;
+  box-shadow: var(--shadow-nav);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+  transition: box-shadow var(--t-med);
+}
+
+/* Animated gold shimmer line at bottom of navbar */
+.main-nav::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold-muted)  20%,
+    var(--gold-bright) 50%,
+    var(--gold-muted)  80%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  animation: gold-line 4s linear infinite;
+}
+
+@keyframes gold-line {
+  0%   { background-position: 0%   0%; }
+  100% { background-position: 300% 0%; }
+}
+
+/* ======================================================
+   BRAND — logo + text, perfectly centred together
+   ====================================================== */
+.nav-brand {
+  display: flex;
+  align-items: center;       /* logo & text on same vertical axis */
+  gap: 10px;
+  height: 100%;              /* fill full navbar height           */
+  flex: 0 0 auto;
+  min-width: 0;
+  overflow: visible;
+  padding: 6px 20px 6px 14px;
+  border-right: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Wrapper <a> must also be flex so logo fills properly */
+.nav-brand a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* ── LOGO — fills navbar height minus vertical padding ── */
+.nav-brand .logo {
+  height: var(--logo-h-desktop);
+  width: auto;
+  flex-shrink: 0;
+  pointer-events: none;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.35));
+  transition: filter var(--t-med), transform var(--t-med);
+}
+
+.nav-brand:hover .logo {
+  filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.6));
+  transform: scale(1.04);
+}
+
+/* ── BRAND TEXT — vertically centred beside logo ── */
+.brand-text {
+  font-family: var(--ff-brand);
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  align-self: center;   /* always centred, regardless of logo height */
+  line-height: 1.1;
+}
+
+/* ======================================================
+   NAV LINKS
+   ====================================================== */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  position: relative;
+}
+
+.nav-links a,
+.dropdown-trigger {
+  text-decoration: none;
+  color: var(--white-90);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--t-fast);
+  font-size: 1rem;
+  font-family: var(--ff-ui);
+  letter-spacing: 0.3px;
+}
+
+.nav-links a.active,
+.nav-links a:hover,
+.dropdown-trigger:hover {
+  color: var(--gold-bright);
+}
+
+.nav-links a::after,
+.dropdown-trigger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  border-radius: 2px;
+  transition: width var(--t-med);
+}
+
+.nav-links a:hover::after,
+.dropdown-trigger:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+/* ======================================================
+   CONTACT BLOCK (DESKTOP)
+   ====================================================== */
+.nav-contact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+  padding-right: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  color: var(--white-60);
+  font-family: var(--ff-ui);
+  font-size: 13px;
+  font-weight: 400;
+  transition: color var(--t-fast);
+}
+
+.contact-item i {
+  color: var(--gold);
+  font-size: 15px;
+  transition: color var(--t-fast), transform var(--t-fast);
+}
+
+.contact-item:hover i   { color: var(--gold-bright); transform: scale(1.15); }
+.contact-item:hover span,
+.contact-item:hover a   { color: var(--white-90); }
+
+/* ======================================================
+   DROPDOWN (standard)
+   ====================================================== */
+.dropdown {
+  position: relative;
+  overflow: visible;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  left: 0;
+  background: var(--green);
+  border-radius: var(--radius);
+  min-width: 300px;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity var(--t-med), transform var(--t-med);
+  box-shadow: var(--shadow-dropdown);
+  z-index: 3000;
+  border-top: 2px solid var(--gold);
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 12px 18px;
+  color: var(--white-90);
+  font-size: 0.93rem;
+  font-weight: 400;
+  transition: background var(--t-fast), color var(--t-fast), padding-left var(--t-fast);
+}
+
+.dropdown-menu li a:hover {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold-bright);
+  padding-left: 24px;
+}
+
+@media (min-width: 769px) {
+  .nav-links { overflow: visible; }
+  .dropdown:hover .dropdown-menu  { opacity: 1; visibility: visible; transform: translateY(0); }
+  .dropdown:hover .dropdown-trigger i { transform: rotate(180deg); }
+}
+
+/* ======================================================
+   HAMBURGER BUTTON
+   ====================================================== */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 2100;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.menu-toggle span {
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  display: block;
+  border-radius: 2px;
+  transform-origin: center;
+  transition: background var(--t-fast), transform 0.3s var(--ease), opacity 0.3s;
+}
+
+.menu-toggle:hover span { background: var(--gold-bright); }
+
+/* Hamburger → X when sidebar open */
+.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ======================================================
+   MOBILE OVERLAY
+   Dark backdrop — tap it to close the sidebar
+   ====================================================== */
+.mobile-overlay {
+  display: none; /* shown only on ≤1024px via media query below */
+}
+
+@media (max-width: 1024px) {
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;                          /* covers full screen */
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 1999;                     /* just below sidebar (2000) */
+    animation: overlay-in 0.25s ease both;
+  }
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ======================================================
+   MOBILE CONTACT BLOCK
+   ====================================================== */
+.mobile-contact { display: none; }
+
+.mobile-whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  transition: color var(--t-fast);
+  font-family: var(--ff-ui);
+}
+
+.mobile-whatsapp-link:hover { color: #25d366; }
+
+/* ======================================================
+   TABLET / MOBILE  ≤ 1024px
+   ====================================================== */
+@media (max-width: 1024px) {
+  .main-nav {
+    height: var(--navbar-h-tablet);
+    padding: 0 14px;
+    flex-wrap: nowrap;
+    align-items: center;
+    overflow: visible;
+    /* sticky still applies — stays at top */
+    position: sticky;
+    top: 0;
+  }
+
+  .nav-brand {
+    gap: 8px;
+    padding: 6px 14px 6px 8px;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* ── TABLET LOGO ── */
+  .nav-brand .logo {
+    height: var(--logo-h-tablet);
+    width: auto;
+    display: block;
+  }
+
+  .brand-text {
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menu-toggle {
+    display: flex;
+    position: static;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Sidebar drawer */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 78%;
+    max-width: var(--sidebar-w);
+    background: var(--green-deep);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 24px 40px;
+    gap: 22px;
+    transition: right 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2000;           /* above overlay (1999) */
+    overflow-y: auto;
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.55);
+    border-left: 2px solid rgba(212, 175, 55, 0.3);
+  }
+
+  .nav-links.open { right: 0; }
+
+  .dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    display: none;
+    background: transparent;
+    box-shadow: none;
+    padding-left: 10px;
+    border-top: none;
+  }
+
+  .dropdown.open .dropdown-menu { display: block; }
+
+  .nav-contact { display: none; }
+
+  .mobile-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    width: 100%;
+  }
+
+  .mobile-contact .contact-item,
+  .mobile-contact .contact-item span,
+  .mobile-contact .contact-item a { font-size: 14px; color: var(--white-60); }
+  .mobile-contact .contact-item i  { font-size: 15px; flex-shrink: 0; color: var(--gold); }
+
+  .mega-right { display: none !important; }
+}
+
+/* ======================================================
+   MOBILE  ≤ 768px
+   ====================================================== */
+@media (max-width: 768px) {
+  .main-nav {
+    height: var(--navbar-h-mobile);
+    padding: 0 12px;
+    position: sticky;
+    top: 0;
+  }
+
+  .nav-brand {
+    padding: 5px 10px 5px 6px;
+    gap: 7px;
+  }
+
+  /* ── MOBILE LOGO — large & prominent ── */
+  .nav-brand .logo {
+    height: var(--logo-h-mobile);
+    width: auto;
+  }
+
+  .brand-text { font-size: 16px; }
+}
+
+/* ======================================================
+   SMALL MOBILE  ≤ 480px
+   ====================================================== */
+@media (max-width: 480px) {
+  :root {
+    --logo-h-mobile:    50px;
+    --navbar-h-mobile:  64px;
+  }
+
+  .brand-text { font-size: 15px; }
+}
+
+/* ======================================================
+   ULTRA SMALL  ≤ 360px
+   ====================================================== */
+@media (max-width: 360px) {
+  :root {
+    --logo-h-mobile:    44px;
+    --navbar-h-mobile:  58px;
+  }
+
+  .brand-text { font-size: 13px; }
+  .nav-links a, .dropdown-trigger { font-size: 0.93rem; }
+}
+
+/* ======================================================
+   DESKTOP  1025–1250px
+   ====================================================== */
+@media (min-width: 1025px) and (max-width: 1250px) {
+  :root {
+    --logo-h-desktop:   70px;
+    --navbar-h-desktop: 82px;
+  }
+
+  .nav-links { gap: 24px; }
+  .nav-links a, .dropdown-trigger { font-size: 0.97rem; }
+  .nav-contact { gap: 14px; font-size: 13px; }
+  .brand-text { font-size: 19px; }
+}
+
+/* ======================================================
+   LARGE DESKTOP  1600px+
+   ====================================================== */
+@media (min-width: 1600px) {
+  :root {
+    --logo-h-desktop:   96px;
+    --navbar-h-desktop: 108px;
+  }
+
+  .nav-links { gap: 44px; }
+  .brand-text { font-size: 25px; }
+}
+
+/* ======================================================
+   MISC z-index
+   ====================================================== */
+.dropdown-menu { z-index: 5000; }
+
+@media (min-width: 1025px) {
+  .dropdown          { position: relative; }
+  .mega-dropdown     { display: none; flex-direction: row; }
+  .dropdown:hover .mega-dropdown  { display: flex !important; }
+  .dropdown:hover > .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+}
+
+/* ======================================================
+   MEGA DROPDOWN
+   ====================================================== */
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.products-arrow {
+  font-size: 1em;
+  line-height: 1;
+  transition: transform var(--t-med);
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  position: relative;
+  top: 1px;
+  color: var(--gold);
+}
+
+.dropdown.open .products-arrow,
+.dropdown:hover .products-arrow { transform: rotate(180deg); }
+
+.mega-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--green);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-dropdown);
+  z-index: 6000;
+  overflow: visible;
+  min-width: 280px;
+  flex-direction: row;
+  border-top: 2px solid var(--gold);
+  animation: mega-enter 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes mega-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* Hover bridge — prevents flicker when moving mouse to dropdown */
+.dropdown-trigger::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+}
+
+@media (max-width: 1024px) {
+  .mega-dropdown {
+    position: static;
+    flex-direction: column;
+    box-shadow: none;
+    border-radius: 0;
+    background: transparent;
+    padding-left: 0;
+    min-width: unset;
+    width: 100%;
+    border-top: none;
+    animation: none;
+  }
+  .dropdown.open .mega-dropdown { display: flex; }
+}
+
+/* ─── MEGA LEFT ─── */
+.mega-left {
+  min-width: 230px;
+  padding: 8px 0;
+  border-right: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+@media (max-width: 1024px) {
+  .mega-left { border-right: none; min-width: unset; width: 100%; }
+}
+
+.mega-all-link {
+  display: block;
+  padding: 14px 20px 12px;
+  font-weight: 700;
+  font-size: 0.93rem;
+  color: var(--gold) !important;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  letter-spacing: 0.4px;
+  font-family: var(--ff-ui);
+  transition: background var(--t-fast);
+}
+
+.mega-all-link:hover { background: rgba(212, 175, 55, 0.08); }
+
+.mega-cat-list { list-style: none; padding: 6px 0; margin: 0; }
+.mega-cat-item { position: relative; }
+
+.mega-cat-link {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 20px !important;
+  color: var(--white-90) !important;
+  text-decoration: none;
+  font-size: 0.92rem !important;
+  font-weight: 400;
+  font-family: var(--ff-ui);
+  transition: background var(--t-fast), color var(--t-fast), padding-left var(--t-fast);
+}
+
+.mega-cat-link::after { display: none !important; }
+
+.mega-cat-link:hover,
+.mega-cat-item.active .mega-cat-link {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold-bright) !important;
+  padding-left: 26px !important;
+}
+
+.mega-cat-arrow {
+  font-size: 1.2rem;
+  color: var(--gold-muted);
+  opacity: 0.7;
+  transition: color var(--t-fast), opacity var(--t-fast), transform var(--t-fast);
+  line-height: 1;
+}
+
+.mega-cat-link:hover .mega-cat-arrow,
+.mega-cat-item.active .mega-cat-arrow { color: var(--gold-bright); opacity: 1; }
+
+.mega-cat-item.mobile-open > .mega-cat-link .mega-cat-arrow {
+  transform: rotate(90deg);
+  color: var(--gold-bright);
+  opacity: 1;
+}
+
+/* ─── MEGA RIGHT (desktop only) ─── */
+.mega-right {
+  min-width: 210px;
+  padding: 8px 0;
+  background: var(--green-mid);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.mega-right-header {
+  display: block;
+  padding: 14px 20px 12px;
+  font-weight: 700;
+  font-size: 0.93rem;
+  color: var(--gold) !important;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  letter-spacing: 0.3px;
+  font-family: var(--ff-ui);
+  transition: background var(--t-fast);
+}
+
+.mega-right-header::after { display: none !important; }
+.mega-right-header:hover   { background: rgba(212, 175, 55, 0.08); }
+
+.mega-sub-list { list-style: none; padding: 6px 0; margin: 0; }
+
+.mega-sub-list li a {
+  display: block;
+  padding: 10px 20px;
+  color: var(--white-60);
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-family: var(--ff-ui);
+  font-weight: 400;
+  transition: background var(--t-fast), color var(--t-fast), padding-left var(--t-fast);
+}
+
+.mega-sub-list li a::after { display: none !important; }
+
+.mega-sub-list li a:hover {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gold-bright);
+  padding-left: 28px;
+}
+
+/* ─── MOBILE SUB LIST ─── */
+.mobile-sub-list {
+  list-style: none;
+  padding: 4px 0 4px 16px;
+  margin: 0 0 0 20px;
+  border-left: 2px solid rgba(212, 175, 55, 0.25);
+}
+
+.mobile-sub-list li a {
+  display: block;
+  padding: 9px 12px;
+  color: var(--white-60);
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-family: var(--ff-ui);
+  transition: color var(--t-fast);
+}
+
+.mobile-sub-list li a::after { display: none !important; }
+.mobile-sub-list li a:hover   { color: var(--gold-bright); }
+.mobile-sub-all { font-weight: 700; color: var(--gold) !important; }

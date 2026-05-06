@@ -1,0 +1,195 @@
+:root {
+  --green-deep: #071e18;
+  --green: #0b3026;
+  --green-mid: #134535;
+
+  --gold: #d4af37;
+  --gold-bright: #f0cc60;
+  --gold-muted: #a88820;
+  --gold-glow: rgba(212, 175, 55, 0.25);
+
+  --white: #ffffff;
+
+  --ff-brand: "Playfair Display", Georgia, serif;
+  --ff-ui: "DM Sans", system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* SECTION */
+.about-section {
+  position: relative;
+  padding: 100px 0;
+  background: var(--white);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ✨ Decorative Glow Circles */
+.about-decor {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+}
+
+.about-decor-1 {
+  width: 250px;
+  height: 250px;
+  background: var(--gold-glow);
+  top: -60px;
+  left: -60px;
+}
+
+.about-decor-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(11, 48, 38, 0.08);
+  bottom: -80px;
+  right: -80px;
+}
+
+/* CONTAINER */
+.about-container {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 0 20px;
+  animation: fadeUp 1s var(--ease);
+}
+
+/* BADGE */
+.about-badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 26px;
+  background: var(--gold-glow);
+  color: var(--gold);
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-family: var(--ff-ui);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+
+.about-badge:hover {
+  background: var(--gold);
+  color: #fff;
+}
+
+/* TITLE */
+.about-title {
+  font-family: var(--ff-brand);
+  font-size: clamp(2.8rem, 6vw, 4.2rem);
+  font-weight: 500;
+  margin-bottom: 25px;
+  background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+  position: relative;
+}
+
+/* ✨ GOLD UNDERLINE EFFECT */
+.title-accent {
+  display: block;
+  width: 80px;
+  height: 3px;
+  margin: 12px auto 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  border-radius: 2px;
+  transition: 0.4s;
+}
+
+.about-title:hover .title-accent {
+  width: 140px;
+}
+
+/* TEXT */
+.about-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #4a5568;
+  font-family: var(--ff-ui);
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto 35px;
+}
+
+/* BUTTON */
+.about-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+background: linear-gradient(135deg, #ffd34e, #e9b50a, #cfa310);
+  color: #fff;
+  border-radius: 50px;
+  font-family: var(--ff-ui);
+  font-size: 0.95rem;
+  text-decoration: none;
+  overflow: hidden;
+  transition: 0.4s var(--ease);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ✨ Shine effect */
+.btn-shine {
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.4),
+    transparent 70%
+  );
+  top: 0;
+  left: -120%;
+  transition: 0.6s;
+}
+
+.about-btn:hover .btn-shine {
+  left: 120%;
+}
+
+/* Hover effect */
+.about-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* Arrow animation */
+.btn-arrow {
+  transition: transform 0.3s;
+}
+
+.about-btn:hover .btn-arrow {
+  transform: translateX(6px);
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .about-section {
+    padding: 70px 0;
+  }
+
+  .about-text {
+    font-size: 1rem;
+  }
+}

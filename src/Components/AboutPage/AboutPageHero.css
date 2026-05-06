@@ -1,0 +1,176 @@
+:root {
+  --gold: #d4af37;
+  --gold-bright: #f0cc60;
+  --gold-glow: rgba(212, 175, 55, 0.22);
+  --ff-brand: "Playfair Display", Georgia, serif;
+  --ff-ui: "DM Sans", system-ui, sans-serif;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* HERO SECTION WRAPPER (About) */
+.ab-hero {
+  position: relative;
+  width: 100%;
+  min-height: 50vh;
+  padding: 120px 20px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: left;
+  font-family: var(--ff-ui);
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(6, 6, 6, 0.7), rgba(6, 6, 6, 0.88)),
+    url("../../assets/images/Contact/Contact1.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Optional: separate bg if future dynamic image */
+.ab-hero__bg-img {
+  position: absolute;
+  inset: 0;
+  background: url("../../assets/images/Contact/Contact1.png") center / cover
+    no-repeat;
+  z-index: 0;
+}
+
+/* Overlay – similar to contact but a bit softer */
+.ab-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, var(--gold-glow), transparent 55%),
+    linear-gradient(rgba(6, 6, 6, 0.7), rgba(6, 6, 6, 0.92));
+  z-index: 1;
+}
+
+/* Inner content wrapper */
+.ab-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  animation: ab-hero-fade-in 0.7s var(--ease) 0.05s both;
+}
+
+/* Eyebrow label */
+.ab-hero__eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 14px;
+  opacity: 0.9;
+  color: var(--gold-bright);
+}
+
+/* Main title */
+.ab-hero__title {
+  font-family: var(--ff-brand);
+  font-size: clamp(2.3rem, 4vw, 3.4rem);
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+/* Underline with slight animation */
+.ab-hero__title-line {
+  display: block;
+  width: 64px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  border-radius: 999px;
+  margin-top: 16px;
+  transform-origin: left;
+  transform: scaleX(0.4);
+  opacity: 0;
+  animation: ab-hero-line-in 0.6s var(--ease) 0.25s forwards;
+}
+
+/* Tagline */
+.ab-hero__tagline {
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 520px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: ab-hero-tagline-in 0.6s var(--ease) 0.35s forwards;
+}
+
+/* Wave at bottom */
+.ab-hero__wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  z-index: 3;
+}
+
+.ab-hero__wave svg {
+  display: block;
+  width: 100%;
+  height: 70px;
+}
+
+/* Animations */
+@keyframes ab-hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ab-hero-line-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ab-hero-tagline-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .ab-hero {
+    min-height: 70vh;
+    padding: 100px 18px 60px;
+  }
+
+  .ab-hero__title {
+    font-size: 2.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ab-hero {
+    padding: 90px 16px 50px;
+  }
+
+  .ab-hero__title {
+    font-size: 1.9rem;
+  }
+
+  .ab-hero__tagline {
+    font-size: 14px;
+  }
+}
