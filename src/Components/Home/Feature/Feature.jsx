@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Feature.css";
 import logo from "../../../assets/images/Logo/Logo.png";
-import featureImg from "../../../assets/images/Feature/feature.png";
+import featureImg from "../../../assets/images/Feature/Feature.png";
 
 const Feature = () => {
   const brandFeatures = [
